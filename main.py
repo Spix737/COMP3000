@@ -6,8 +6,9 @@ def setup_game():
     board = Board()
     players = [Player("Player 1"), Player("Player 2"), Player("Player 3"), Player("Player 4")]
     # ... set up tiles, resources, players, etc.
-
     # Determine the initial order based on dice rolls
+
+    # Simulate the initial dice roll to determine the first player
     initial_order = [(player, roll_dice()) for player in players]
     initial_order.sort(key=lambda x: x[1], reverse=True)
 
@@ -15,12 +16,18 @@ def setup_game():
     for player, roll in initial_order:
         print(f"{player.player_name} rolled a {roll}")
 
-    for player, roll in initial_order:
-        print(f"{player.player_name}'s turn to place a settlement.")
-        # Implement logic for allowing the player to place a settlement
+    # Determine the first player based on the highest dice roll
+    highest_roll = max(initial_order, key=lambda x: x[1])
+    first_player = highest_roll[0]  # The player with the highest roll
 
-    for player, roll in reversed(initial_order):
-        print(f"{player.player_name}'s turn to place a settlement.")
-        # Implement logic for allowing the player to place a settlement
+    # Find the index of the first player in the list of players
+    first_player_index = players.index(first_player)
+    
+    # Determine the clockwise order of players
+    player_order = players[first_player_index:] + players[:first_player_index]
+
+    # Now, player_order contains the order in which players will take their turns, with the first player going first in a clockwise direction.
+    print("First Player:", first_player.player_name)
+    print("Player Order:", [player.player_name for player in player_order])
 
 setup_game()

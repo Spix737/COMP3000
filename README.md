@@ -11,3 +11,35 @@ brick (from hills),
 ore (from mountains),
 lumber (from forest), and
 wool (from pasture).
+
+#### token placements.
+
+    0  1  2
+  3  4  5  6
+7  8  9  A  B
+  C  D  E  F
+   A1 A2 A3
+
+0, 3, 7
+1, c4, c8, cC
+c5, c2, c9, cD, cA1
+c6, cA, cE, cA2
+cA3, cF, cB
+
+pips:
+1, 1, 2, 2, 2, 2,
+3, 3, 3, 3,
+4, 4, 4, 4, 5, 5, 5, 5,
+X,
+
+c: 'c','c','c','c',
+
+f: 'f','f','f','f',
+
+m: 'm','m','m','m',
+
+h: 'h','h','h',
+
+p: 'p','p','p',
+
+X: 'X'

@@ -39,6 +39,7 @@ def setup_players():
 def setup_board():
     def place_and_check(i, first = None, second = None, third = None):
         x = True
+        # ta = board.terrain_array
         err_count = 0
         unusable = []
         while x == True:
@@ -85,10 +86,6 @@ def setup_board():
 
     board = Board()
 
-    # Shuffle terrain types and number tokens
-    # random.shuffle(board.terrain_array)
-    random.shuffle(board.probability_array)
-
     # step 1: place hexagons
     # req - ensure adjacent hexagon's aren't of similar type.
 
@@ -120,6 +117,56 @@ def setup_board():
     # req - ensure adjacent hexagon's don't have the same number token
     # req - tile intersection prob total cannot be higher than 11
     # req - probabilities should be balanced over a resource
+
+    # List of numbers
+    numbers = [1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5]
+
+    # Define the classes and their instance counts
+    class_counts = {'c': 4, 'f': 4, 'm': 4, 'h': 3, 'p': 3}
+
+    # Initialize class objects with empty lists to store assigned numbers
+    class_objects = {cls: [] for cls in class_counts}
+
+    # Shuffle the numbers list to distribute them randomly
+    random.shuffle(numbers)
+
+    # Distribute numbers as evenly as possible
+    while numbers:
+        for cls, count in class_counts.items():
+            if count > 0:
+                # Calculate the current mean for this class
+                current_mean = sum(class_objects[cls]) / len(class_objects[cls]) if class_objects[cls] else 0
+                # Find the number that minimizes the deviation from the current mean
+                number = min(numbers, key=lambda x: abs(current_mean + x - sum(class_objects[cls] + [x]) / (len(class_objects[cls]) + 1)))
+                class_objects[cls].append(number)
+                numbers.remove(number)
+                class_counts[cls] -= 1
+
+    # Print the distribution
+    for cls, numbers_assigned in class_objects.items():
+        print(f'{cls}: {numbers_assigned}, mean: {sum(numbers_assigned) / len(numbers_assigned)}')
+        
+    def prob_and_check(i, intersect_a=None, intersect_b=None, intersect_c=None):
+        print("prob_and_check")
+        # for the provided tile, find the resource type
+        resource_type = board.board[board.tile_types_center[i]]
+        # LOOP
+        x = True
+        while x == True:
+        # for the resource type, select from the available pip values
+            available_numbers_for_resource = class_objects[resource_type]
+        # if pip value is valid with the intersects, roll with it
+            if intersect_c == None:
+                if intersect_b == None:
+                    if(intersect_a == None):
+                        
+                        x = False
+                    else:
+        # else, go up 
+        # LOOP
+        # for a pip value, select from the available probabilities
+        # if probability is equal to neighbours, don't roll with it
+
     board.display_board()
     return board
 

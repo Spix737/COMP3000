@@ -44,6 +44,9 @@ def setup_board():
         unusable = []
         while x == True:
             ptile = random.choice(board.terrain_array)
+            if ptile == 'X':
+                board.desert_coord = board.tile_types_center[i]
+                board.board[board.tile_types_center[i]] = ptile
             if third == None:
                 if second == None:
                     if(first == None):
@@ -83,7 +86,7 @@ def setup_board():
             if err_count > 20:
                 print("Error: too many iterations")
                 break
-
+        print("Desert at: ", board.desert_coord)
     board = Board()
 
     # step 1: place hexagons
@@ -119,49 +122,95 @@ def setup_board():
     # req - probabilities should be balanced over a resource
 
     # List of numbers
-    numbers = [1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5]
+    pip_counts = [1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5]
 
     # Define the classes and their instance counts
-    class_counts = {'c': 4, 'f': 4, 'm': 4, 'h': 3, 'p': 3}
+    resource_counts = {'c': 4, 'f': 4, 'm': 4, 'h': 3, 'p': 3}
 
-    # Initialize class objects with empty lists to store assigned numbers
-    class_objects = {cls: [] for cls in class_counts}
+    # Initialize resource objects with empty lists to store assigned numbers
+    resource_pips = {cls: [] for cls in resource_counts}
 
     # Shuffle the numbers list to distribute them randomly
-    random.shuffle(numbers)
+    random.shuffle(pip_counts)
 
-    # Distribute numbers as evenly as possible
-    while numbers:
-        for cls, count in class_counts.items():
+    # Distribute pip_counts as evenly as possible
+    while pip_counts:
+        for cls, count in resource_counts.items():
             if count > 0:
-                # Calculate the current mean for this class
-                current_mean = sum(class_objects[cls]) / len(class_objects[cls]) if class_objects[cls] else 0
+                # Calculate the current mean for this resource
+                current_mean = sum(resource_pips[cls]) / len(resource_pips[cls]) if resource_pips[cls] else 0
                 # Find the number that minimizes the deviation from the current mean
-                number = min(numbers, key=lambda x: abs(current_mean + x - sum(class_objects[cls] + [x]) / (len(class_objects[cls]) + 1)))
-                class_objects[cls].append(number)
-                numbers.remove(number)
-                class_counts[cls] -= 1
+                pip = min(pip_counts, key=lambda x: abs(current_mean + x - sum(resource_pips[cls] + [x]) / (len(resource_pips[cls]) + 1)))
+                resource_pips[cls].append(pip)
+                pip_counts.remove(pip)
+                resource_counts[cls] -= 1
 
     # Print the distribution
-    for cls, numbers_assigned in class_objects.items():
-        print(f'{cls}: {numbers_assigned}, mean: {sum(numbers_assigned) / len(numbers_assigned)}')
-        
-    def prob_and_check(i, intersect_a=None, intersect_b=None, intersect_c=None):
-        print("prob_and_check")
+    for cls, pip_counts_assigned in resource_pips.items():
+        print(f'{cls}: {pip_counts_assigned}, mean: {sum(pip_counts_assigned) / len(pip_counts_assigned)}')
+    
+
+    # function for getting probability from pip
+    def pick_pip(available_pips, neighbour_a=0, neighbour_b_d=0, neighbour_c=0):
+        x = True
+        while x == True:
+        # for a pip value, select from the available probabilities
+            our_pips = available_pips
+            selected_pip =  random.choice(our_pips)
+            if neighbour_a != 0:
+                if neighbour_b_d != 0:
+                    if neighbour_c != 0:
+                        if selected_pip + neighbour_b_d + neighbour_c <= 11:
+                            if selected_pip + neighbour_b_d + neighbour_a <= 11:
+                                available_pips.remove(selected_pip)
+                                return selected_pip, available_pips
+                            else:
+                                our_pips.remove(selected_pip)
+                                if len(our_pips) == 0:
+                                    print("Error: no pips left")
+                                    break
+                    if selected_pip + neighbour_b_d + neighbour_a <= 11:
+                                available_pips.remove(selected_pip)
+                                return selected_pip, available_pips
+                    else:
+                        our_pips.remove(selected_pip)
+                        if len(our_pips) == 0:
+                            print("Error: no pips left")
+                            break
+            else:
+                available_pips.remove(selected_pip)
+                return selected_pip, available_pips
+
+
+# pick a pip
+# max amount of neighbours = 3
+# is the pip total among neighbours > 11?
+# if yes, pick again
+# if no, return the pip
+
+# using pip, pick a probability
+# max amount of neighbours = 3
+# is the probability different to either neighbour?
+# if yes, return the probability
+# if no, pick again - but not that probability
+# if no probabilities, pick another pip but not that pip
+
+    def pick_probability(i, intersect_a=None, intersect_b=None, intersect_c=None):
+        pip_probability_values = {
+            1: [2, 12,],
+            2: [3, 3, 11, 11,],
+            3: [4, 4, 10, 10,],
+            4: [5, 5, 9, 9,],
+            5: [6, 6, 8, 8,],
+        }
         # for the provided tile, find the resource type
         resource_type = board.board[board.tile_types_center[i]]
         # LOOP
         x = True
         while x == True:
-        # for the resource type, select from the available pip values
-            available_numbers_for_resource = class_objects[resource_type]
-        # if pip value is valid with the intersects, roll with it
-            if intersect_c == None:
-                if intersect_b == None:
-                    if(intersect_a == None):
-                        
-                        x = False
-                    else:
+        # for the resource type, get a pip
+            selected_pip = pick_pip(pip_counts_assigned[resource_type] )
+
         # else, go up 
         # LOOP
         # for a pip value, select from the available probabilities

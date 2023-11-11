@@ -27,6 +27,8 @@ class Board:
         # ]
         'X']
     
+    desert_coord = -1
+
     vertices = [
         0,2,4,6,8,10,12, #1top
         26,28,30,32,34,36,38,40,42, #2top, 1bot

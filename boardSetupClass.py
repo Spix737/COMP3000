@@ -24,8 +24,8 @@ class Board:
         'm','m','m','m',
         'h','h','h',
         'p','p','p',
-        # ]
-        'X']
+        ]
+        # 'X']
     
     desert_coord = -1
 

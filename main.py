@@ -231,6 +231,7 @@ def setup_board():
             our_pips = resource_pip_dict[tile_resource]
             while x == True:
                 if len(our_pips) == 0:
+                    board.display_board()
                     return "Cornered error - time to try new MAP"
                 selected_pip = random.choice(our_pips)
                 if intersect_c != 0:

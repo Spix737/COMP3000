@@ -1,12 +1,4 @@
 // Init canvas and some other important global variables.
-let canvas = document.getElementById('canvas');
-canvas.width = window.innerWidth * 0.7;
-canvas.height = window.innerHeight * 0.8;
-let WIDTH = Math.min(canvas.width, canvas.height);
-let HEIGHT = WIDTH;
-const center_x = WIDTH/2;
-const center_y = 2*HEIGHT/3;
-const radius = WIDTH/7/2;
 let socket = null;
 
 // Variables for drawing hexagons.

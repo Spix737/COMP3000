@@ -42,10 +42,37 @@ def setup_board():
     
     kb = IDP.from_file("catan_board_idp_theory.idp")
     T, S = kb.get_blocks("T, S")
-    for model in model_expand(T,S):
+    for model in model_expand(T,S, max=1):
         print(model)
 
-    board.display_board()
+    
+
+    # Default Catan layout
+    tile_colors = {'hills': '#fa914f', 'forest': '#187b13', 'pasture': '#5ee557', 'mountains': '#9d998f', 'fields': '#fbf250', 'desert': '#fcf799', 'none': 'white'}
+    default_tiles = ['mountains', 'pasture', 'forest', 'fields', 'hills', 'pasture', 'hills', 'fields', 'forest', 'desert', 'forest', 'mountains', 'forest', 'mountains', 'fields', 'pasture', 'hills', 'fields', 'pasture']
+    default_tokens = [10, 2, 9, 12, 6, 4, 10, 9, 11, 7, 3, 8, 8, 3, 4, 5, 5, 6, 11]
+    tiles = ['none'] * 19
+    tokens = [None] * 19
+    neg_tiles = [[] for _ in range(19)]
+    neg_tokens = [[] for _ in range(19)]
+    next_tile = {'none': 'hills', 'hills': 'forest', 'forest': 'mountains', 'mountains': 'fields', 'fields': 'pasture', 'pasture': 'desert', 'desert': 'none'}
+    coordinates = [[0, -2], [1, -2], [2, -2], [-1, -1], [0, -1], [1, -1], [2, -1], [-2, 0], [-1, 0], [0, 0], [1, 0], [2, 0], [-2, 1], [-1, 1], [0, 1], [1, 1], [-2, 2], [-1, 2], [0, 2]]
+    highlight_tile = None
+    extra_constraints = {'centerdesert': False, 'neighbourtoken': False, 'neighbourtile': False, 'balanceprob': False, 'elevenpips': False}
+
+    def reset():
+        for i in range(len(tiles)):
+            tiles[i] = 'none'
+            tokens[i] = None
+            neg_tiles[i] = []
+            neg_tokens[i] = []
+
+    # Initiating the model expansion and drawing the initial board.
+    model_expand()
+
+    print(tiles)
+
+    # board.display_board()
     return board
 
 setup_game()

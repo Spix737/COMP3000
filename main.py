@@ -1,17 +1,19 @@
 import math
 import re
-from boardSetupClass import Board 
+import random
+from boardSetupClass import Board
 from PlayerClass import Player
 from GameLogic import roll_dice
-import random
 from idp_engine import IDP, model_expand
 
 def setup_game():
+    '''set up a instance of a game'''
     setup_players()
     setup_board()
 
 
 def setup_players():
+    '''set up the players for the game'''
     players = [Player("Player 1"), Player("Player 2"), Player("Player 3"), Player("Player 4")]
     # ... set up tiles, resources, players, etc.
     # Determine the initial order based on dice rolls
@@ -40,6 +42,7 @@ def setup_players():
 
 
 def setup_board():
+    '''set up the board for a game'''
     board = Board()
     # default_tiles = ['mountains', 'pasture', 'forest', 'fields', 'hills', 'pasture', 'hills', 'fields', 'forest', 'desert', 'forest', 'mountains', 'forest', 'mountains', 'fields', 'pasture', 'hills', 'fields', 'pasture']
     # default_tokens = [10, 2, 9, 12, 6, 4, 10, 9, 11, 7, 3, 8, 8, 3, 4, 5, 5, 6, 11]
@@ -73,88 +76,95 @@ def setup_board():
             q = coordinates[0]
             r = coordinates[1]
             idx = axialCoordToTileId(q, r)
-            if idx != None:
+            if idx is not None:
               tiles[idx] = tile_type
         for coordinates, tile_token in coordinate_token_dict.items():
             q = coordinates[0]
             r = coordinates[1]
             idx = axialCoordToTileId(q, r)
-            if idx != None:
+            if idx is not None:
               tokens[idx] = tile_token
 
+    for i in range(0,len(tiles)):
+       index = board.tile_value_left[i]
+       board.board[index] = tokens[i]
+       board.board[index+1] = tiles[i]
     print('tiles:')
     print(tiles)
     print('tokens:')
     print(tokens)
+    board.display_board()
 
 # ADD THIS INFO TO OUR ARRAY
 
 def axialCoordToTileId(q, r):
-  # If invalid, return null.
-  if abs(q + r) > 2:
-    return None
-  idx = None
-  if (r == -2):
-    idx = abs(q)
-  elif (r == -1): 
-    idx = q + 4
-  elif (r == 0): 
-    idx = q + 9
-  elif (r == 1): 
-    idx = q + 14
-  elif (r == 2): 
-    idx = q + 18
-  return idx
+	'''Converts axial coordinates to a tile id'''
+	# If invalid, return null.
+	if abs(q + r) > 2:
+		return None
+	idx = None
+	if (r == -2):
+		idx = abs(q)
+	elif (r == -1): 
+		idx = q + 4
+	elif (r == 0): 
+		idx = q + 9
+	elif (r == 1): 
+		idx = q + 14
+	elif (r == 2): 
+		idx = q + 18
+	return idx
 
 
-def setNeg(negDict, neg_tiles, neg_tokens):
-  for i in negDict['tile_type']:
-    coords = i
-    coords = coords.replace(')', '').replace('(', '').replace("'", '')
-    coords = coords.split(', ')
-    q = int(coords[0])
-    r = int(coords[1])
-    idx = axialCoordToTileId(q, r)
-    neg_tiles[idx] = int(negDict['tile_type'][i])
-    # console.log(negDict['tile_token'])
-  for j in negDict['tile_token']:
-    coords = j
-    coords = coords.replace(')', '').replace('(', '').replace("'", '')
-    coords = coords.split(', ')
-    q = int(coords[0])
-    r = int(coords[1])
-    idx = axialCoordToTileId(q, r)
-    neg_tokens[idx] = int(negDict['tile_token'][i])
+# def setNeg(negDict, neg_tiles, neg_tokens):
+#   for i in negDict['tile_type']:
+#     coords = i
+#     coords = coords.replace(')', '').replace('(', '').replace("'", '')
+#     coords = coords.split(', ')
+#     q = int(coords[0])
+#     r = int(coords[1])
+#     idx = axialCoordToTileId(q, r)
+#     neg_tiles[idx] = int(negDict['tile_type'][i])
+#     # console.log(negDict['tile_token'])
+#   for j in negDict['tile_token']:
+#     coords = j
+#     coords = coords.replace(')', '').replace('(', '').replace("'", '')
+#     coords = coords.split(', ')
+#     q = int(coords[0])
+#     r = int(coords[1])
+#     idx = axialCoordToTileId(q, r)
+#     neg_tokens[idx] = int(negDict['tile_token'][i])
 
-def setPos(posDict, tiles, tokens):
-  for i in posDict['tile_type']:
-    coords = i
-    coords = coords.replace(')', '').replace('(', '').replace("'", '')
-    coords = coords.split(', ')
-    q = int(coords[0])
-    r = int(coords[1])
-    idx = axialCoordToTileId(q, r)
-    if idx == None:
-      continue
-    tiles[idx] = posDict['tile_type'][i]
-    # console.log(posDict['tile_token'])
-  for j in posDict['tile_token']:
-    coords = j
-    coords = coords.replace(')', '').replace('(', '').replace("'", '')
-    coords = coords.split(', ')
-    q = int(coords[0])
-    r = int(coords[1])
-    idx = axialCoordToTileId(q, r)
-    if idx == None:
-      continue
-    tokens[idx] = int(posDict['tile_token'][i])
+# def setPos(posDict, tiles, tokens):
+#   for i in posDict['tile_type']:
+#     coords = i
+#     coords = coords.replace(')', '').replace('(', '').replace("'", '')
+#     coords = coords.split(', ')
+#     q = int(coords[0])
+#     r = int(coords[1])
+#     idx = axialCoordToTileId(q, r)
+#     if idx == None:
+#       continue
+#     tiles[idx] = posDict['tile_type'][i]
+#     # console.log(posDict['tile_token'])
+#   for j in posDict['tile_token']:
+#     coords = j
+#     coords = coords.replace(')', '').replace('(', '').replace("'", '')
+#     coords = coords.split(', ')
+#     q = int(coords[0])
+#     r = int(coords[1])
+#     idx = axialCoordToTileId(q, r)
+#     if idx == None:
+#       continue
+#     tokens[idx] = int(posDict['tile_token'][i])
 
-  def reset(neg_tiles, neg_tokens):
-      for i in range(len(tiles)):
-          tiles[i] = 'none'
-          tokens[i] = None
-          neg_tiles[i] = []
-          neg_tokens[i] = []
+def reset(tiles, tokens):
+	'''resets the board'''
+	for i in range(len(tiles)):
+		tiles[i] = 'none'
+		tokens[i] = None
+		# neg_tiles[i] = []
+		# neg_tokens[i] = []
 
     # board.display_board()
 

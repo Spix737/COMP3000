@@ -12,10 +12,10 @@ class Player:
         pass
 
         # logic for placing the first 2 settlements
-        def place_settlement(self, *board, vertex):
+        def place_settlement(self, board, vertex):
             board[vertex] = self.player_name
 
-        def place_road(self, *board, edge):
+        def place_road(self, board, edge):
             board[edge] = self.player_name
             
         def add_resource(self, resource, qty):

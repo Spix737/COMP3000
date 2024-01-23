@@ -3,13 +3,14 @@ import re
 import random
 from boardSetupClass import Board
 from PlayerClass import Player
-from GameLogic import roll_dice
+from GameLogic import roll_dice, initial_placements
 from idp_engine import IDP, model_expand
 
 def setup_game():
     '''set up a instance of a game'''
-    setup_players()
+    player_order = setup_players()
     setup_board()
+    initial_placements(player_order)
 
 
 def setup_players():
@@ -39,6 +40,7 @@ def setup_players():
     # Now, player_order contains the order in which players will take their turns, with the first player going first in a clockwise direction.
     print("First Player:", first_player.player_name)
     print("Player Order:", [player.player_name for player in player_order])
+    return player_order
 
 
 def setup_board():
@@ -55,6 +57,9 @@ def setup_board():
     extra_constraints = {'centerdesert': False, 'neighbourtoken': False, 'neighbourtile': False, 'balanceprob': False, 'elevenpips': False}
 
     kb = IDP.from_file("catan_board_idp_theory.idp")
+
+    # add limitations to 
+
     T, S = kb.get_blocks("T, S")
     for model in model_expand(T,S, max=1):
         # print(model)
@@ -159,12 +164,12 @@ def axialCoordToTileId(q, r):
 #     tokens[idx] = int(posDict['tile_token'][i])
 
 def reset(tiles, tokens):
-	'''resets the board'''
-	for i in range(len(tiles)):
-		tiles[i] = 'none'
-		tokens[i] = None
-		# neg_tiles[i] = []
-		# neg_tokens[i] = []
+    '''resets the board'''
+    for i in range(len(tiles)):
+        tiles[i] = 'none'
+        tokens[i] = None
+        # neg_tiles[i] = []
+        # neg_tokens[i] = []
 
     # board.display_board()
 

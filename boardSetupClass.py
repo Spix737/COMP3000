@@ -36,7 +36,7 @@ class Board:
         102,104,106,108,110,112,114,116,118,120,122, #4top, 3bot
         140,142,144,146,148,150,152,154,156, #5top, 4bot
         170,172,174,176,178,180,182 #5bot
-        ]
+        ] #54 vertices?
 
     edges = [
         1,3,5,7,9,11,
@@ -76,6 +76,8 @@ class Board:
             160,164,168 #tileRow5
     ]
 
+    current_robber_pos = 0
+
     #to traverse to other hexes, add 4 * number of hexes to traverse to each value
     first_hex = [0, 1, 2, 3, 4,
                 13,14,15,16,17,
@@ -114,7 +116,13 @@ class Board:
         '3',
     ]
 
+    # port map dict
+    # object that holds each port type for each port vertex
+    # OR object that holds each vertex pair for each port
+    
+
     def display_board(self):
+        '''display the board intuitively'''
         # print(self.board[0:13])
         print(self.board[13:26])
         # print(self.board[26:43])

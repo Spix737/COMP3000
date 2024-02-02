@@ -15,7 +15,7 @@ def setup_game():
 
 def setup_players():
     '''set up the players for the game'''
-    players = [Player("Player 1"), Player("Player 2"), Player("Player 3"), Player("Player 4")]
+    players = [Player("P1"), Player("P2"), Player("P3"), Player("P4")]
     # ... set up tiles, resources, players, etc.
     # Determine the initial order based on dice rolls
 
@@ -175,3 +175,14 @@ def reset(tiles, tokens):
 
 
 setup_game()
+
+# game loop
+
+# for each player
+
+# 1 roll dice
+#   if digit, hand out cards
+#   if 7, discard, then move robber
+
+
+

@@ -9,10 +9,10 @@ class Player:
             'cl': 0,
             'sh': 0
         }
-        pass
 
         # logic for placing the first 2 settlements
         def place_settlement(self, board, vertex):
+
             board[vertex] = self.player_name
 
         def place_road(self, board, edge):
@@ -24,3 +24,11 @@ class Player:
         def remove_resource(self, resource, qty):
             self.resources[resource] -= qty
 
+
+        def decide_int(prompt="Enter an integer: "):
+            while True:
+                try:
+                    user_input = int(input(prompt))
+                    return user_input
+                except ValueError:
+                    print("Invalid input. Please enter a valid integer.")

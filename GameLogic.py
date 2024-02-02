@@ -1,5 +1,15 @@
 import random
 
+def decide_int(prompt="Enter an integer: "):
+    while True:
+        try:
+            user_input = int(input(prompt))
+            return user_input
+        except ValueError:
+            print("Invalid input. Please enter a valid integer.")
+
+
+
 def roll_dice():
     return random.randint(1,6) + random.randint(1,6)
 

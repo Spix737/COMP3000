@@ -9,7 +9,6 @@ def decide_int(prompt="Enter an integer: "):
             print("Invalid input. Please enter a valid integer.")
 
 
-
 def roll_dice():
     return random.randint(1,6) + random.randint(1,6)
 

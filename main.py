@@ -6,11 +6,49 @@ from PlayerClass import Player
 from GameLogic import roll_dice, initial_placements
 from idp_engine import IDP, model_expand
 
-def setup_game():
+def play_game():
     '''set up a instance of a game'''
     player_order = setup_players()
-    setup_board()
+    board = setup_board()
     initial_placements(player_order)
+
+    board.board[2] = 'p1'
+    board.board[28] = 'P1'
+    board.board[70] = 'p1'
+    board.board[176] = 'P1'
+    board.board[60] = 'P1'
+    pe1 = Player("P1")
+    board.display_board()
+
+    resource_per_roll(board, pe1, 6)
+    resource_per_roll(board, pe1, 8)
+    # game loop
+    # gameRunning = True
+    # while gameRunning:
+    #     for player in player_order:
+
+    #         action = select_action(get_state())
+
+    #         # game.play_turn(action)
+
+
+    # given map, current available build positions,
+
+    # allow use of dev card (once per turn)
+    #
+    # roll dice
+    #   if digit, hand out cards
+    #   if 7, discard, then move robber
+    #     if 2+ players on tile's vertices, pick a player & steal card, else steal card (if player has a card)
+    #   if unused, allow use of dev card
+    #
+
+    # build - trade cycle
+    # while endTurn flag is not set
+    #   allow to trade (if resources are available, then remove from inventory)
+    #   Trading:
+    #   
+    #   allow to build (if resources are available, then remove from inventory)
 
 
 def setup_players():
@@ -54,7 +92,7 @@ def setup_board():
     neg_tokens = [[] for _ in range(19)]
     next_tile = {'none': 'hills', 'hills': 'forest', 'forest': 'mountains', 'mountains': 'fields', 'fields': 'pasture', 'pasture': 'desert', 'desert': 'none'}
     # coordinates = [[0, -2], [1, -2], [2, -2], [-1, -1], [0, -1], [1, -1], [2, -1], [-2, 0], [-1, 0], [0, 0], [1, 0], [2, 0], [-2, 1], [-1, 1], [0, 1], [1, 1], [-2, 2], [-1, 2], [0, 2]]
-    extra_constraints = {'centerdesert': False, 'neighbourtoken': False, 'neighbourtile': False, 'balanceprob': False, 'elevenpips': False}
+    extra_constraints = {'centerdesert': False, 'neighbourtoken': True, 'neighbourtile': True, 'balanceprob': True, 'elevenpips': True}
 
     kb = IDP.from_file("catan_board_idp_theory.idp")
 
@@ -91,37 +129,37 @@ def setup_board():
               tokens[idx] = tile_token
 
     for i in range(0,len(tiles)):
-       index = board.tile_value_left[i]
-       board.board[index] = tokens[i]
-       board.board[index+1] = tiles[i]
-    print('tiles:')
-    print(tiles)
-    print('tokens:')
-    print(tokens)
+        index = board.tile_value_left[i]
+        board.board[index] = tokens[i]
+        board.board[index+1] = tiles[i]
+    # print('tiles:')
+    # print(tiles)
+    # print('tokens:')
+    # print(tokens)
     board.display_board()
+    return board
 
 # ADD THIS INFO TO OUR ARRAY
 
 def axialCoordToTileId(q, r):
-	'''Converts axial coordinates to a tile id'''
-	# If invalid, return null.
-	if abs(q + r) > 2:
-		return None
-	idx = None
-	if (r == -2):
-		idx = abs(q)
-	elif (r == -1): 
-		idx = q + 4
-	elif (r == 0): 
-		idx = q + 9
-	elif (r == 1): 
-		idx = q + 14
-	elif (r == 2): 
-		idx = q + 18
-	return idx
+    '''Converts axial coordinates to a tile id'''
+    # If invalid, return null.
+    if abs(q + r) > 2:
+        return None
+    idx = None
+    if (r == -2):
+        idx = abs(q)
+    elif (r == -1): 
+        idx = q + 4
+    elif (r == 0): 
+        idx = q + 9
+    elif (r == 1): 
+        idx = q + 14
+    elif (r == 2): 
+        idx = q + 18
+    return idx
 
-
-# def setNeg(negDict, neg_tiles, neg_tokens):
+def setNeg(negDict, neg_tiles, neg_tokens):
 #   for i in negDict['tile_type']:
 #     coords = i
 #     coords = coords.replace(')', '').replace('(', '').replace("'", '')
@@ -162,6 +200,7 @@ def axialCoordToTileId(q, r):
 #     if idx == None:
 #       continue
 #     tokens[idx] = int(posDict['tile_token'][i])
+    print('does nothing')
 
 def reset(tiles, tokens):
     '''resets the board'''
@@ -173,16 +212,68 @@ def reset(tiles, tokens):
 
     # board.display_board()
 
+def select_action():
+    '''selects an action for an AI player'''
+    print('does nothing')
 
-setup_game()
+def select_action_human():
+    '''selects an action for a human player'''
+    print('does nothing')
 
-# game loop
+def get_state():
+    '''returns the state of the game'''
+    # what data will be needed for the AI:
+        
+    # needs to return the map, the players & each of their resources but NOT their dev cards
+    # Check whether MANUAL % calculation of resource probs, r. probs per player, etc is needed or if done my ml.
+    
+    print('does nothing')
 
-# for each player
+#  NEED TO DETERMINE METHOD TO NAVIGATE THROUGH HEXES IN A CORRECT FASHION
+#  NEED TO DETERMINE METHOD TO NAVIGATE THROUGH HEXES IN A CORRECT FASHION
+#  NEED TO DETERMINE METHOD TO NAVIGATE THROUGH HEXES IN A CORRECT FASHION
+#  NEED TO DETERMINE METHOD TO NAVIGATE THROUGH HEXES IN A CORRECT FASHION
+#  NEED TO DETERMINE METHOD TO NAVIGATE THROUGH HEXES IN A CORRECT FASHION
+#  NEED TO DETERMINE METHOD TO NAVIGATE THROUGH HEXES IN A CORRECT FASHION
+#  NEED TO DETERMINE METHOD TO NAVIGATE THROUGH HEXES IN A CORRECT FASHION
+#  NEED TO DETERMINE METHOD TO NAVIGATE THROUGH HEXES IN A CORRECT FASHION
+#  NEED TO DETERMINE METHOD TO NAVIGATE THROUGH HEXES IN A CORRECT FASHION
+#  NEED TO DETERMINE METHOD TO NAVIGATE THROUGH HEXES IN A CORRECT FASHION
+#  NEED TO DETERMINE METHOD TO NAVIGATE THROUGH HEXES IN A CORRECT FASHION
+def resource_per_roll(board, player, roll_no):
+    # returns the resources
+    resources = {
+        'wheat': 0,
+        'wood': 0,
+        'ore': 0,
+        'clay': 0,
+        'sheep': 0
+    }
+    print('roll_no: ' + str(roll_no))
+    hex_id = 1
+    for val in board.tile_value_left:
+        print('val: ' + str(val))
+        print('board.board[val]: ' + str(board.board[val]))
+        if board.board[val] == str(roll_no):
+            print('roll_no: ' + str(roll_no))
+            increment = 4 * hex_id
+            print('increment/4: ' + str(increment/4))
+            for i in board.first_hex_vertices:
+                if board.board[i + increment] == player.player_name.lower():
+                    print("board.board[c]: " + str(board.tile_types_center[hex_id]))
+                    print("board.resource_tile_map: " + str(board.resource_tile_map[board.tile_types_center[hex_id]]))
+                    resources[board.resource_tile_map[board.tile_types_center[hex_id]]] += 1
 
-# 1 roll dice
-#   if digit, hand out cards
-#   if 7, discard, then move robber
+                elif board.board[i + increment] == player.player_name.upper():
+                    print("board.board[c]: " + str(board.tile_types_center[hex_id]))
+                    # print("board.resource_tile_map: " + str(board.resource_tile_map[board.board[7 + increment]]))
+                    resources[board.resource_tile_map[board.tile_types_center[hex_id]]] += 2
+        hex_id += 0
+
+    print(resources)
+    return resources
 
 
 
+
+play_game()

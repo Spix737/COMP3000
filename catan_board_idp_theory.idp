@@ -1,5 +1,6 @@
 vocabulary V {
-    type Q := {-2..2}
+
+    type Q := {-2..2}
     type R := {-2..2}
     type Tile := {hills, forest, mountains, fields, pasture, desert, none}
     type Token := {1..12}

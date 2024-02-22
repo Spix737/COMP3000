@@ -82,6 +82,8 @@ class Board:
     first_hex = [0, 1, 2, 3, 4,
                 13,14,15,16,17,
                 28,29,30,31,32]
+    
+    first_hex_vertices = [0, 2, 4, 28, 30, 32]
         
     perimeter_vertices = [
         0,2,4,6,8,10,12, #1top
@@ -92,6 +94,7 @@ class Board:
         170,172,174,176,178,180,182 #5bot
         ]
     
+    # PORTS NOT YET ADDED TO MAIN ARRAY
     ports_vertices = [
         0,2,
         6,8,
@@ -105,11 +108,11 @@ class Board:
     ]
 
     port_types = [
-        'wh',
-        'wo',
-        'or',
-        'cl',
-        'sh',
+        'wheat',
+        'wood',
+        'ore',
+        'clay',
+        'sheep',
         '3',
         '3',
         '3',
@@ -119,19 +122,38 @@ class Board:
     # port map dict
     # object that holds each port type for each port vertex
     # OR object that holds each vertex pair for each port
-    
+    # OR just add them to the array WHERE player is meant to be placed!
+
+    resource_tile_map = {
+        'mountains': 'ore',
+        'hills': 'clay',
+        'forest': 'wood',
+        'fields': 'wheat', 
+        'pasture': 'sheep',
+    }
 
     def display_board(self):
         '''display the board intuitively'''
-        # print(self.board[0:13])
-        print(self.board[13:26])
-        # print(self.board[26:43])
-        print(self.board[43:60])
-        # print(self.board[60:81])
-        print(self.board[81:102])
-        # print(self.board[102:123])
-        print(self.board[123:140])
-        # print(self.board[140:157])
-        print(self.board[157:174])
-        # print(self.board[174:183])
+        print(self.board[0:13]) # 12
+        print('\n')
+        print(self.board[13:26]) # 13
+        print('\n')
+        print(self.board[26:43]) # 17
+        print('\n')
+        print(self.board[43:60]) # 17
+        print('\n')
+        print(self.board[60:81]) # 21
+        print('\n')
+        print(self.board[81:102]) # 21
+        print('\n')
+        print(self.board[102:123]) # 21
+        print('\n')
+        print(self.board[123:140]) # 17
+        print('\n')
+        print(self.board[140:157]) # 17
+        print('\n')
+        print(self.board[157:170]) # 13
+        print('\n')
+        print(self.board[170:183]) # 12
+        print('\n')
     

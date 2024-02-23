@@ -53,11 +53,11 @@ theory T : V{
     !q1, q2 in Q, r1, r2 in R: neighbour(q1, r1, q2, r2) => tile_type(q1, r1) ~= tile_type(q2, r2).
 
     // Balance the low probability tokens over the resources.
-    !t in Tile: t = pasture | t = fields | t = forest => #{q in Q, r in R: tile_type(q, r) = t & token_pips(tile_token(q, r)) =< 2} < 3.
-    !t in Tile: t = hills | t = mountains => #{q in Q, r in R: tile_type(q, r) = t & token_pips(tile_token(q, r)) =< 2} < 2.
+    //!t in Tile: t = pasture | t = fields | t = forest => #{q in Q, r in R: tile_type(q, r) = t & token_pips(tile_token(q, r)) =< 2} < 3.
+    //!t in Tile: t = hills | t = mountains => #{q in Q, r in R: tile_type(q, r) = t & token_pips(tile_token(q, r)) =< 2} < 2.
 
     // Each intersection may not contain more than 11 pips (they should not be too fruitful!)
-    !q1, q2, q3 in Q, r1, r2, r3 in R: neighbour(q1, r1, q2, r2) & neighbour(q1, r1, q3, r3) & neighbour(q2, r2, q3, r3) => token_pips(tile_token(q1, r1)) + token_pips(tile_token(q2, r2)) + token_pips(tile_token(q3, r3)) =<  11.
+    //!q1, q2, q3 in Q, r1, r2, r3 in R: neighbour(q1, r1, q2, r2) & neighbour(q1, r1, q3, r3) & neighbour(q2, r2, q3, r3) => token_pips(tile_token(q1, r1)) + token_pips(tile_token(q2, r2)) + token_pips(tile_token(q3, r3)) =<  11.
 }
 
 structure S: V {

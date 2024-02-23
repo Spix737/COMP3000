@@ -9,7 +9,14 @@ from idp_engine import IDP, model_expand
 def play_game():
     '''set up a instance of a game'''
     player_order = setup_players()
-    board = setup_board()
+    dynamic_constraints = {
+        'centerdesert': False,
+        'neighbourtile': False,
+        'neighbourtoken': False,
+        'balanceprob': False,
+        'elevenpips': False
+    }
+    board = setup_board(dynamic_constraints)
     initial_placements(player_order)
 
     board.board[2] = 'p1'
@@ -23,7 +30,7 @@ def play_game():
     resource_per_roll(board, pe1, 6)
     resource_per_roll(board, pe1, 8)
     # game loop
-    # gameRunning = True
+    # gameRunning = False
     # while gameRunning:
     #     for player in player_order:
 
@@ -49,6 +56,31 @@ def play_game():
     #   Trading:
     #   
     #   allow to build (if resources are available, then remove from inventory)
+
+def play_game_with_constraints():
+    '''Play a game with user-selected constraints for board generation'''
+    # Example dynamic constraints based on user input (this could be obtained via a GUI or command line inputs in practice)
+    dynamic_constraints = {
+        'centerdesert': True,
+        'neighbourtile': True,
+        'neighbourtoken': True,
+        'balanceprob': False,
+        'elevenpips': True
+    }
+    player_order = setup_players()
+    board = setup_board(dynamic_constraints)
+    initial_placements(player_order)
+
+    # Example of modifying the board for demonstration (this would be based on the game logic)
+    board.board[2] = 'p1'
+    board.board[28] = 'P1'
+    board.board[70] = 'p1'
+    board.board[176] = 'P1'
+    board.board[60] = 'P1'
+    pe1 = Player("P1")
+
+    resource_per_roll(board, pe1, 6)
+    resource_per_roll(board, pe1, 8)
 
 
 def setup_players():
@@ -81,7 +113,7 @@ def setup_players():
     return player_order
 
 
-def setup_board():
+def setup_board(dynamic_constraints):
     '''set up the board for a game'''
     board = Board()
     # default_tiles = ['mountains', 'pasture', 'forest', 'fields', 'hills', 'pasture', 'hills', 'fields', 'forest', 'desert', 'forest', 'mountains', 'forest', 'mountains', 'fields', 'pasture', 'hills', 'fields', 'pasture']
@@ -96,15 +128,29 @@ def setup_board():
 
     kb = IDP.from_file("catan_board_idp_theory.idp")
 
-    # add limitations to 
+    if not dynamic_constraints:  # If there are no constraints, we can freely shuffle
+        available_tiles = ['hills', 'forest', 'mountains', 'fields', 'pasture', 'desert'] * 3  # Adjust as necessary
+        available_tokens = [2, 3, 3, 4, 4, 5, 5, 6, 6, 8, 8, 9, 9, 10, 10, 11, 11, 12]  # Adjust as necessary
+        random.shuffle(available_tiles)
+        random.shuffle(available_tokens)
+
+    if dynamic_constraints['centerdesert']:
+        kb.modify_theory("tile_type(0, 0) = desert.")
+    if dynamic_constraints['neighbourtile']:
+        kb.modify_theory("!q1, q2 in Q, r1, r2 in R: neighbour(q1, r1, q2, r2) => tile_type(q1, r1) ~= tile_type(q2, r2).")
+    if dynamic_constraints['neighbourtoken']:
+        kb.modify_theory("!q1, q2 in Q, r1, r2 in R: neighbour(q1, r1, q2, r2) => tile_token(q1, r1) ~= tile_token(q2, r2).")
+    if dynamic_constraints['balanceprob']:
+        kb.modify_theory("!t in Tile: t = pasture | t = fields | t = forest => #{q in Q, r in R: tile_type(q, r) = t & token_pips(tile_token(q, r)) =< 2} < 3.")
+        kb.modify_theory("!t in Tile: t = hills | t = mountains => #{q in Q, r in R: tile_type(q, r) = t & token_pips(tile_token(q, r)) =< 2} < 2.")
+    if dynamic_constraints['elevenpips']:
+        kb.modify("!q1, q2, q3 in Q, r1, r2, r3 in R: neighbour(q1, r1, q2, r2) & neighbour(q1, r1, q3, r3) & neighbour(q2, r2, q3, r3) => token_pips(tile_token(q1, r1)) + token_pips(tile_token(q2, r2)) + token_pips(tile_token(q3, r3)) =<  11.")
 
     T, S = kb.get_blocks("T, S")
     for model in model_expand(T,S, max=1):
-        # print(model)
-
         # Split the model into categories
         categories = re.split(r"(\w+ := .+?})", model)
-        del categories[0]     
+        del categories[0]   
         tile_type = categories[0]
         tile_token = categories[2]
         pattern = r"\((-?\d+), (-?\d+)\) -> (\w+)"
@@ -230,16 +276,6 @@ def get_state():
     print('does nothing')
 
 #  NEED TO DETERMINE METHOD TO NAVIGATE THROUGH HEXES IN A CORRECT FASHION
-#  NEED TO DETERMINE METHOD TO NAVIGATE THROUGH HEXES IN A CORRECT FASHION
-#  NEED TO DETERMINE METHOD TO NAVIGATE THROUGH HEXES IN A CORRECT FASHION
-#  NEED TO DETERMINE METHOD TO NAVIGATE THROUGH HEXES IN A CORRECT FASHION
-#  NEED TO DETERMINE METHOD TO NAVIGATE THROUGH HEXES IN A CORRECT FASHION
-#  NEED TO DETERMINE METHOD TO NAVIGATE THROUGH HEXES IN A CORRECT FASHION
-#  NEED TO DETERMINE METHOD TO NAVIGATE THROUGH HEXES IN A CORRECT FASHION
-#  NEED TO DETERMINE METHOD TO NAVIGATE THROUGH HEXES IN A CORRECT FASHION
-#  NEED TO DETERMINE METHOD TO NAVIGATE THROUGH HEXES IN A CORRECT FASHION
-#  NEED TO DETERMINE METHOD TO NAVIGATE THROUGH HEXES IN A CORRECT FASHION
-#  NEED TO DETERMINE METHOD TO NAVIGATE THROUGH HEXES IN A CORRECT FASHION
 def resource_per_roll(board, player, roll_no):
     # returns the resources
     resources = {
@@ -250,25 +286,37 @@ def resource_per_roll(board, player, roll_no):
         'sheep': 0
     }
     print('roll_no: ' + str(roll_no))
-    hex_id = 1
+    hex_id = 0
     for val in board.tile_value_left:
-        print('val: ' + str(val))
-        print('board.board[val]: ' + str(board.board[val]))
         if board.board[val] == str(roll_no):
             print('roll_no: ' + str(roll_no))
-            increment = 4 * hex_id
+            if hex_id < 2:
+                increment = 4 * hex_id
+            elif hex_id < 6:
+                increment = 4 * hex_id + 2
+            elif hex_id < 11:
+                increment = 4 * hex_id + 4
+            elif hex_id < 15:
+                increment = 4 * hex_id + 2
+            else:
+                increment = 4 * hex_id
             print('increment/4: ' + str(increment/4))
             for i in board.first_hex_vertices:
                 if board.board[i + increment] == player.player_name.lower():
-                    print("board.board[c]: " + str(board.tile_types_center[hex_id]))
-                    print("board.resource_tile_map: " + str(board.resource_tile_map[board.tile_types_center[hex_id]]))
-                    resources[board.resource_tile_map[board.tile_types_center[hex_id]]] += 1
-
+                    print("board.resource_tile_map1: " + str(board.resource_tile_map[board.board[board.tile_types_center[hex_id]]]))
+                    print("rb4 1")
+                    print(resources[board.resource_tile_map[board.board[board.tile_types_center[hex_id]]]])
+                    resources[board.resource_tile_map[board.board[board.tile_types_center[hex_id]]]] += 1
+                    print("ra 1")
+                    print(resources[board.resource_tile_map[board.board[board.tile_types_center[hex_id]]]])
                 elif board.board[i + increment] == player.player_name.upper():
-                    print("board.board[c]: " + str(board.tile_types_center[hex_id]))
-                    # print("board.resource_tile_map: " + str(board.resource_tile_map[board.board[7 + increment]]))
-                    resources[board.resource_tile_map[board.tile_types_center[hex_id]]] += 2
-        hex_id += 0
+                    print("board.resource_tile_map2: " + str(board.resource_tile_map[board.board[board.tile_types_center[hex_id]]]))
+                    print("rb4 2")
+                    print(resources[board.resource_tile_map[board.board[board.tile_types_center[hex_id]]]])
+                    resources[board.resource_tile_map[board.board[board.tile_types_center[hex_id]]]] += 2
+                    print("ra 2")
+                    print(resources[board.resource_tile_map[board.board[board.tile_types_center[hex_id]]]])
+        hex_id += 1
 
     print(resources)
     return resources

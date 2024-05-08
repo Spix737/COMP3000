@@ -1,4 +1,6 @@
 # COMP3000
+THIS REPOSITORY HAS BEEN SHELVED. SEE catanatron_players for COMP3000 submission
+
 My personal repository for my UoP 3rd Year COMP3000 Project
 
 
